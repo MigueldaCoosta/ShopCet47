@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ShopCet47.Web.Data;
+using ShopCet47.Web.Data.Repositories;
 
 namespace ShopCet47.Web
 {
@@ -26,10 +27,15 @@ namespace ShopCet47.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Vamos usar um serviço SQLServer
             services.AddDbContext<DataContext>(cfg =>
             {
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            //Vou usar a minha classe SeedDb para alimentar as tabelas da BD    
+            services.AddTransient<SeedDb>();
+            services.AddScoped<IRepository, Repository>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {

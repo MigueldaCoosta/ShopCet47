@@ -7,34 +7,35 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ShopCet47.Web.Data;
 using ShopCet47.Web.Data.Entities;
+using ShopCet47.Web.Data.Repositories;
 
 namespace ShopCet47.Web.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly DataContext _context;
+        private readonly IRepository _repository;
 
-        public ProductsController(DataContext context)
+        public ProductsController(IRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Products.ToListAsync());
+            return View(_repository.GetProducts());
         }
 
         // GET: Products/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = _repository.GetProduct(id.Value);
+
             if (product == null)
             {
                 return NotFound();
@@ -58,22 +59,22 @@ namespace ShopCet47.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                _repository.AddProduct(product);
+                await _repository.SaveAllAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = _repository.GetProduct(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -97,12 +98,13 @@ namespace ShopCet47.Web.Controllers
             {
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    _repository.UpdateProduct(product);
+                    await _repository.SaveAllAsync();
+                    
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    if (!_repository.ProdutctExists(product.Id))
                     {
                         return NotFound();
                     }
@@ -117,15 +119,14 @@ namespace ShopCet47.Web.Controllers
         }
 
         // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = _repository.GetProduct(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -139,15 +140,10 @@ namespace ShopCet47.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            var product = _repository.GetProduct(id);
+            _repository.RemoveProduct(product);
+            await _repository.SaveAllAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProductExists(int id)
-        {
-            return _context.Products.Any(e => e.Id == id);
         }
     }
 }
