@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ShopCet47.Web.Data;
+using ShopCet47.Web.Data.Entities;
 using ShopCet47.Web.Data.Repositories;
 
 namespace ShopCet47.Web
@@ -27,6 +29,22 @@ namespace ShopCet47.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Configurar a autenticação
+            services.AddIdentity<User, IdentityRole>(cfg =>
+            {
+                cfg.User.RequireUniqueEmail = true;
+                cfg.Password.RequireDigit = false;
+                cfg.Password.RequiredUniqueChars = 0;
+                cfg.Password.RequireLowercase = false;
+                cfg.Password.RequireUppercase = false;
+                cfg.Password.RequiredLength = 6;
+                cfg.Password.RequireNonAlphanumeric = false;
+            })
+            .AddEntityFrameworkStores<DataContext>();
+
+
+
+
             //Vamos usar um serviço SQLServer
             services.AddDbContext<DataContext>(cfg =>
             {
@@ -36,6 +54,7 @@ namespace ShopCet47.Web
             //Vou usar a minha classe SeedDb para alimentar as tabelas da BD    
             services.AddTransient<SeedDb>();
             services.AddScoped<IRepository, Repository>();
+
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -63,6 +82,7 @@ namespace ShopCet47.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseCookiePolicy();
 
             app.UseMvc(routes =>
