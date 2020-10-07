@@ -23,12 +23,6 @@
             @Html.DisplayFor(model => model.Price)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.ImageUrl)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ImageUrl)
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.LastPurchase)
         </dt>
         <dd>
@@ -52,9 +46,15 @@
         <dd>
             @Html.DisplayFor(model => model.Stock)
         </dd>
+        <dd>
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Url.Content(Model.ImageUrl)" alt="imagem" style="width:300px; height:450px; max-width:100%; height:auto;" />
+                }
+        </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-success">Back to List</a>
 </div>
