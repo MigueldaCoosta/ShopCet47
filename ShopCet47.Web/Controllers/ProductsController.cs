@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.EntityFrameworkCore;
-using ShopCet47.Web.Data;
 using ShopCet47.Web.Data.Entities;
 using ShopCet47.Web.Data.Repositories;
 using ShopCet47.Web.Helpers;
 using ShopCet47.Web.Models;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace ShopCet47.Web.Controllers
 {
+    [Authorize]
     public class ProductsController : Controller
     {
         private readonly IProductRepository _productRepository;
@@ -33,7 +30,7 @@ namespace ShopCet47.Web.Controllers
         }
 
         // GET: Products/Details/5
-        public async Task <IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -67,7 +64,7 @@ namespace ShopCet47.Web.Controllers
             {
                 var path = string.Empty;
 
-                if(view.ImageFile != null && view.ImageFile.Length > 0)
+                if (view.ImageFile != null && view.ImageFile.Length > 0)
                 {
 
                     var guid = Guid.NewGuid().ToString();
@@ -77,8 +74,8 @@ namespace ShopCet47.Web.Controllers
                         Directory.GetCurrentDirectory(),
                         "wwwroot\\images\\Products",
                         file);
-                    
-                    using(var stream = new FileStream(path, FileMode.Create))
+
+                    using (var stream = new FileStream(path, FileMode.Create))
                     {
                         await view.ImageFile.CopyToAsync(stream);
                     }
@@ -113,7 +110,7 @@ namespace ShopCet47.Web.Controllers
         }
 
         // GET: Products/Edit/5
-        public async Task <IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -186,12 +183,12 @@ namespace ShopCet47.Web.Controllers
                     var product = this.ToProduct(view, path);
 
                     //TODO: Mudar para o user que depois tiver logado
-                    product.user = await _userHelper.GetuUserByEmailAsync("Miguel-costa96@hotmail.com"); 
+                    product.user = await _userHelper.GetuUserByEmailAsync("Miguel-costa96@hotmail.com");
                     await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (! await _productRepository.ExistAsync(view.Id))
+                    if (!await _productRepository.ExistAsync(view.Id))
                     {
                         return NotFound();
                     }
