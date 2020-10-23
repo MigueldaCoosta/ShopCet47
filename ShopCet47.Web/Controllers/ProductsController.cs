@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace ShopCet47.Web.Controllers
 {
-    [Authorize]
     public class ProductsController : Controller
     {
         private readonly IProductRepository _productRepository;
@@ -47,6 +46,7 @@ namespace ShopCet47.Web.Controllers
             return View(product);
         }
 
+        [Authorize]
         // GET: Products/Create
         public IActionResult Create()
         {
@@ -85,8 +85,7 @@ namespace ShopCet47.Web.Controllers
 
                 var product = this.ToProduct(view, path);
 
-                //TODO: Mudar para o user que depois tiver logado
-                product.user = await _userHelper.GetuUserByEmailAsync("Miguel-costa96@hotmail.com");
+                product.user = await _userHelper.GetuUserByEmailAsync(this.User.Identity.Name);
                 await _productRepository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
@@ -109,6 +108,7 @@ namespace ShopCet47.Web.Controllers
             };
         }
 
+        [Authorize]
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -182,8 +182,7 @@ namespace ShopCet47.Web.Controllers
 
                     var product = this.ToProduct(view, path);
 
-                    //TODO: Mudar para o user que depois tiver logado
-                    product.user = await _userHelper.GetuUserByEmailAsync("Miguel-costa96@hotmail.com");
+                    product.user = await _userHelper.GetuUserByEmailAsync(this.User.Identity.Name);
                     await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -202,6 +201,7 @@ namespace ShopCet47.Web.Controllers
             return View(view);
         }
 
+        [Authorize]
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
