@@ -25,7 +25,7 @@ namespace ShopCet47.Web.Data
         {
             await _context.Database.EnsureCreatedAsync();
 
-            var user = await _userHelper.GetuUserByEmailAsync("Miguel-costa96@hotmail.com");
+            var user = await _userHelper.GetUserByEmailAsync("Miguel-costa96@hotmail.com");
             if(user == null)
             {
                 user = new User

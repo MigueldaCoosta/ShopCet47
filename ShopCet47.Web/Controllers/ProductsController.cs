@@ -85,7 +85,7 @@ namespace ShopCet47.Web.Controllers
 
                 var product = this.ToProduct(view, path);
 
-                product.user = await _userHelper.GetuUserByEmailAsync(this.User.Identity.Name);
+                product.user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                 await _productRepository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
@@ -182,7 +182,7 @@ namespace ShopCet47.Web.Controllers
 
                     var product = this.ToProduct(view, path);
 
-                    product.user = await _userHelper.GetuUserByEmailAsync(this.User.Identity.Name);
+                    product.user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                     await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
