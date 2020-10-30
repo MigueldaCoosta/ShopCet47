@@ -1,16 +1,16 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ShopCet47.Web.Data.Entities;
-using ShopCet47.Web.Data.Repositories;
-using ShopCet47.Web.Helpers;
-using ShopCet47.Web.Models;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-
-namespace ShopCet47.Web.Controllers
+﻿namespace ShopCet47.Web.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Data.Entities;
+    using Data.Repositories;
+    using Helpers;
+    using Models;
+    using System;
+    using System.IO;
+    using System.Threading.Tasks;
+
     public class ProductsController : Controller
     {
         private readonly IProductRepository _productRepository;
@@ -46,8 +46,8 @@ namespace ShopCet47.Web.Controllers
             return View(product);
         }
 
-        [Authorize]
         // GET: Products/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -108,8 +108,8 @@ namespace ShopCet47.Web.Controllers
             };
         }
 
-        [Authorize]
         // GET: Products/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -142,14 +142,14 @@ namespace ShopCet47.Web.Controllers
                 Stock = product.Stock,
                 user = product.user
             };
-        }
+        }   
 
         // POST: Products/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,ImageFile,LastPurchase,LastSale,IsAvailable,Stock")] ProductViewModel view)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,ImageFile,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock")] ProductViewModel view)
         {
             if (id != view.Id)
             {
@@ -201,8 +201,8 @@ namespace ShopCet47.Web.Controllers
             return View(view);
         }
 
-        [Authorize]
         // GET: Products/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
