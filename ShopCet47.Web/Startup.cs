@@ -56,6 +56,7 @@ namespace ShopCet47.Web
             services.AddTransient<SeedDb>();
 
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
             //services.AddScoped<ICountryRepository, CountryRepository>();
 
             services.AddScoped<IUserHelper, UserHelper>();
